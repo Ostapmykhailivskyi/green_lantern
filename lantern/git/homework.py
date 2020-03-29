@@ -85,12 +85,9 @@ def multiple_ints_with_conversion(first_value: Any, second_value: Any) -> int:
         >>> "Not valid input data"
     """
     try:
-        first_value = int(first_value)
-        second_value = int(second_value)
-
         return first_value * second_value
     except:
-        raise ValueError
+        raise ValueError("Not valid input data")
 
 def is_word_in_text(word: str, text: str) -> bool:
     """
@@ -107,16 +104,13 @@ def is_word_in_text(word: str, text: str) -> bool:
         is_word_in_text("Glad", "Nice to meet you ")
         >>> False
     """
-    if str(word) in str(text):
-        return True
-    else:
-        return False
+    return word in text
 
 def some_loop_exercise() -> list:
     """
     Use loop to create list that contain int values from 0 to 12 except 6 and 7
     """
-    return [i for i in range(0,13)if i not in [6,7]]
+    return [i for i in range(0,13) if i not in [6,7]]
 
 def remove_from_list_all_negative_numbers(data: List[int]) -> list:
     """
