@@ -11,6 +11,8 @@ class Robot:
         self.asteroid = asteroid
         if self.x > self.asteroid.x:
             raise MissAsteroidError()
+        if self.y > self.asteroid.y:
+            raise MissAsteroidError
 
 
 class MissAsteroidError(Exception):

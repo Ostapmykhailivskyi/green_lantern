@@ -23,3 +23,14 @@ class TestRobotCreation:
         with pytest.raises(MissAsteroidError):
             asteroid = Asteroid(*asteroid_size)
             Robot(*robot_coordinates, asteroid)
+
+
+class TestTurns:
+    def setup(self):
+
+        @pytest.mark.parametrize(
+        "current_direction,expected_direction"
+    
+
+
+        )
