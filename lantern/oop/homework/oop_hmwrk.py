@@ -5,23 +5,23 @@ class Cat:
         self.age = age
         self.average_speed = self._set_average_speed()
 
+    def _reduce_saturation_level(self, value):
+        self.saturation_level = self.saturation_level - value
+        if self.saturation_level < 0:
+            return 0
+
+    def _increase_saturation_level(self, value):
+        self.saturation_level = self.saturation_level + value
+        if self.saturation_level >= 100:
+            return 100
+
     def _set_average_speed(self):
         if self.age <= 7:
             return 12
         elif self.age in range(8, 11):
             return 9
-        elif self.age >= 10:
+        elif self.age > 10:
             return 6
-
-    def _reduce_saturation_level(self, value):
-        self.saturation_level = self.saturation_level - value
-        if self.saturation_level < 0:
-            self.saturation_level = 0
-
-    def _increase_saturation_level(self, value):
-        self.saturation_level = self.saturation_level + value
-        if self.saturation_level >= 100:
-            self.saturation_level = 100
 
     def eat(self, product):
         if product == "fodder":
@@ -50,7 +50,7 @@ class Cat:
         return 'Your cat is died :(' if self.saturation_level == 0 else self.saturation_level
 
     def get_average_speed(self):
-        return self._set_average_speed
+        return self.average_speed
 
 
 class Cheetah (Cat):
