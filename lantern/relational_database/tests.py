@@ -107,7 +107,6 @@ class TestSQLQueries(unittest.TestCase):
             actual_result = task_3_list_customers_in_germany(cursor)
             actual_result = [dict(record) for record in actual_result]
             expected_result = self.load_rows_from_file("task_3.json")
-
         for i, row in enumerate(actual_result):
             self.assertDictEqual(row, expected_result[i])
 
@@ -119,7 +118,6 @@ class TestSQLQueries(unittest.TestCase):
             expected_result = self.load_rows_from_file("task_4.json")
         for i, row in enumerate(actual_result):
             self.assertDictEqual(row, expected_result[i])
-
         self.conn.commit()
 
     def test_task_5(self):

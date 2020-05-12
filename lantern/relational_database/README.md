@@ -21,7 +21,7 @@ https://www.w3resource.com/PostgreSQL/connect-to-postgresql-database.php
 
 
 From linux shell
-    psql -h localhost -U cursor -d cursor_db -p 5433 ( or 5432 based on your version of OS)
+    psql -h localhost -U cursor -d cursor_db -p 5432 (мій робочий варіант 5432) ( or 5432 based on your version of OS)
 
 
 If you catch this error installing psycopg2 in your virtual env
