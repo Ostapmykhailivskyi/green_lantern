@@ -9,6 +9,7 @@ users = Blueprint("users", __name__)
 stores = Blueprint("stores", __name__)
 goods = Blueprint("goods", __name__)
 
+
 api_users = Api(users)
 api_goods = Api(goods)
 api_stores = Api(stores)

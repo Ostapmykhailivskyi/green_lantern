@@ -8,4 +8,5 @@ review config in grocery_store/config.py
     Database exists
     Data written in data_base succesfuly
 
+
 sudo docker run --name some-postgres -e POSTGRES_PASSWORD=very_secret_password -e POSTGRES_USER=cursor -e POSTGRES_DB=cursor_sqlalchemy_db -p 5432:5432 -d postgres

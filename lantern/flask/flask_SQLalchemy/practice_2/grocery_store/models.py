@@ -30,4 +30,4 @@ class Store(db.Model):
     name = db.Column(db.String(), nullable=False)
     city = db.Column(db.String(), nullable=False)
     address = db.Column(db.String(), nullable=False)
-    manager_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    manager_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
