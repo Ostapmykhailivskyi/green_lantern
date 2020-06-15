@@ -1,7 +1,0 @@
-env/
-venv/
-__pycache__/
-*.pyc
-.idea/
-*.egg-info/
-/lantern/flask/flask_SQLalchemy/practice_2/grocery_store/grocery_store.egg-info/
