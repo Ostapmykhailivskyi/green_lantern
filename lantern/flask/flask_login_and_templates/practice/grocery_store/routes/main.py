@@ -5,7 +5,6 @@ from flask import Blueprint, render_template, jsonify
 from grocery_store.database import db
 from flask_login import current_user, login_required
 from grocery_store.models import Good, Store, User, Order, OrderLine
-
 main = Blueprint('main', __name__)
 
 
@@ -22,7 +21,7 @@ def profile():
                            user=current_user.name,
                            email=current_user.email,
                            stores=stores)
-
+  
 
 @main.route('/good', methods=['GET'])
 def gd():
@@ -38,7 +37,6 @@ def st():
 def detail(name=None):
     if name:
         return render_template('detail.html', items=Store.query.filter_by(name=name))
-    return render_template('detail.html')
 
 
 @main.route('/orders')
@@ -46,7 +44,6 @@ def detail(name=None):
 def orders():
     orders = Order.query.filter(Order.user_id == current_user.user_id).all()
     order_ = {}
-
     for order in orders:
         a = []
         b = []
@@ -64,6 +61,5 @@ def orders():
                 suma = sum(b)
                 order_[order.order_id]['name_g'] = dict(zip(a[::], b[::]))
         order_[order.order_id]['sum'] = suma
-
     return render_template('orders.html',
                            orders=order_)

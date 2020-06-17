@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return self.user_id
 
+
 class Good(db.Model):
     __tablename__ = "goods"
     good_id = db.Column(db.Integer, primary_key=True)
@@ -51,4 +52,4 @@ class OrderLine(db.Model):
     order_line_id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.order_id"), nullable=False)
     good_id = db.Column(db.Integer, db.ForeignKey("goods.good_id"), nullable=False)
-    good = db.relationship('Good')
+

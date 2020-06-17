@@ -1,7 +1,6 @@
 import pytest
 
-from homework import Cat, Cheetah, House
-
+from oop_hmwrk import Cat, Cheetah, House
 
 @pytest.mark.parametrize("age, food, result", [
     (6, "fodder", 60),
@@ -162,6 +161,7 @@ class TestHouse:
     def test_zero_length_wallpaper(self):
         with pytest.raises(ValueError):
             self.house.get_number_of_rolls_of_wallpapers(0, 0)
+
 
     def test_get_room_square(self):
         actual_res = self.house.get_room_square()
