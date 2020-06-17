@@ -1,14 +1,11 @@
 import datetime
 from flask_login import UserMixin
-
 from sqlalchemy import DateTime
-
 from grocery_store.database import db
 
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
-
     user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), nullable=False)
@@ -25,7 +22,6 @@ class User(db.Model, UserMixin):
 
 class Good(db.Model):
     __tablename__ = "goods"
-
     good_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=False)
     brand = db.Column(db.String(), nullable=False)
@@ -34,7 +30,6 @@ class Good(db.Model):
 
 class Store(db.Model):
     __tablename__ = "stores"
-
     store_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=False)
     city = db.Column(db.String(), nullable=False)
@@ -45,7 +40,6 @@ class Store(db.Model):
 
 class Order(db.Model):
     __tablename__ = "orders"
-
     order_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
     created_time = db.Column(DateTime, default=datetime.datetime.utcnow)
@@ -55,8 +49,7 @@ class Order(db.Model):
 
 class OrderLine(db.Model):
     __tablename__ = "order_lines"
-
     order_line_id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.order_id"), nullable=False)
     good_id = db.Column(db.Integer, db.ForeignKey("goods.good_id"), nullable=False)
-    good = db.relationship('Good')
+
