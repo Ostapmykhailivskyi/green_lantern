@@ -1,0 +1,49 @@
+from django.db import models
+from django.db.models import Index
+
+
+class City(models.Model):
+    city_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=25)
+    country = models.ForeignKey('Country', on_delete=models.DO_NOTHING, blank=True, db_constraint=False)
+
+
+class Country(models.Model):
+    country_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=25)
+
+
+class Dishes(models.Model):
+    dish_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=42)
+    cost = models.IntegerField()
+    menu_id = models.FloatField()
+
+
+class Menu(models.Model):
+    menu_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=28)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.DO_NOTHING, db_constraint=False)
+    dishes = models.ManyToManyField(Dishes)
+
+
+class Restaurant(models.Model):
+    restaurant_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=28)
+    address = models.CharField(max_length=49, blank=True, null=True)
+    city = models.ForeignKey('City', on_delete=models.DO_NOTHING, blank=True, db_constraint=False)
+
+
+class Staff(models.Model):
+    staff_id = models.IntegerField(primary_key=True)
+    first_name = models.CharField(max_length=15)
+    last_name = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=14, blank=True, null=True)
+    address = models.CharField(max_length=42, blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
+    salary = models.FloatField()
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.DO_NOTHING, db_constraint=False)
+
+    class Meta:
+        indexes = [
+            Index(fields=('first_name',))]

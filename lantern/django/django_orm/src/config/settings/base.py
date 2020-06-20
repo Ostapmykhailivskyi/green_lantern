@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'apps.dealers',
     'apps.cars',
     'apps.photos',
+    'apps.property',
+    'apps.orders',
+    'apps.newsletter',
 ]
 
 MIDDLEWARE = [
