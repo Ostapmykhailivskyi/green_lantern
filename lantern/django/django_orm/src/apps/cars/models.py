@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.cars.managers import CarManager, CarQuerySet
 from common.models import BaseDateAuditModel
-from djmoney.models.fields import MoneyField
+from apps.dealers.models import Dealer
 
 
 class Color(models.Model):
@@ -112,19 +112,10 @@ class Car(BaseDateAuditModel):
     slug = models.SlugField(max_length=75)
     number = models.CharField(max_length=16, unique=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True)
-    dealer = models.ForeignKey(to='dealers.Dealer', on_delete=models.CASCADE, related_name='cars', null=True)
+    dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='cars', null=True)
 
     model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, related_name='cars')
     extra_title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Title second part'))
-    engine_type = models.CharField(max_length=2, choices=ENGINE_TYPE_CHOICES)
-    fuel_type = models.CharField(max_length=2, choices=FUEL_TYPE_CHOICES)
-    population_type = models.CharField(max_length=20, blank=True)
-    price = MoneyField(currency_choices=CURRENCY_CHOICES, max_digits=10)
-    doors = models.IntegerField(null=True, blank=True)
-    engine_capacity = models.FloatField(null=True, blank=True)
-    gear_case = models.CharField(max_length=9, choices=GEAR_CASE_CHOICES)
-    sitting_place = models.IntegerField(null=True, blank=True)
-    engine_power = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         order_number_start = 7600000
@@ -141,7 +132,7 @@ class Car(BaseDateAuditModel):
 
     @property
     def title(self):
-        return f'{self.model.brand} {self.extra_title or ""}'  # do not show None
+        return f'{self.model.brand} {self.extra_title or ""}'
 
     def __str__(self):
         return self.title
@@ -153,3 +144,14 @@ class Car(BaseDateAuditModel):
         indexes = [
             Index(fields=['status', ])
         ]
+
+
+class Property(models.Model):
+    category = models.CharField(max_length=35)
+    name = models.CharField(max_length=20)
+    car = models.ManyToManyField(Car)
+    class Meta:
+        indexes = [Index(fields=['name', ])]
+
+    def __str__(self):
+        return self.name

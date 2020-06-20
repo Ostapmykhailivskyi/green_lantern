@@ -6,10 +6,14 @@ from django.utils.translation import gettext_lazy as _
 
 class Dealer(User):
     city = models.ForeignKey(to='City', related_name='dealers', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email = models.CharField(max_length=24, null=True, blank=True)
+    title = models.CharField(max_length=24, null=True, blank=True)
 
     class Meta:
         verbose_name = _('Dealer')
         verbose_name_plural = _('Dealer')
+        indexes = [Index(fields=['user', ])]
 
     @property
     def title(self):
@@ -21,31 +25,25 @@ class Dealer(User):
 
 class City(models.Model):
     name = models.CharField(max_length=30)
-    country = models.ForeignKey(to='Country', on_delete=models.SET_NULL, null=True, related_name='cities')
+    country = models.ForeignKey(to='Country', on_delete=models.CASCADE, null=True, related_name='cities')
 
     class Meta:
         verbose_name = _('City')
         verbose_name_plural = _('Cities')
-
-        indexes = [
-            Index(fields=['name', ])
-        ]
+        indexes = [Index(fields=['name', ])]
 
     def __str__(self):
         return self.name
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=40, unique=True)
     code = models.IntegerField(null=True, blank=True, unique=True)
 
     class Meta:
         verbose_name = _('Country')
         verbose_name_plural = _('Countries')
-
-        indexes = [
-            Index(fields=['name', ])
-        ]
+        indexes = [Index(fields=['name', ])]
 
     def __str__(self):
         return self.name

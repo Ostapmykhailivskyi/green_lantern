@@ -3,11 +3,11 @@ from common.models import BaseDateAuditModel
 from django.utils.translation import gettext_lazy as _
 
 
-class Newsletter(BaseDateAuditModel):
+class NewsLetters(BaseDateAuditModel):
     email = models.EmailField()
 
     class Meta:
-        verbose_name = _('Newsletter')
+        verbose_name = _('Newsletters')
         verbose_name_plural = _('Newsletters')
 
     def __str__(self):

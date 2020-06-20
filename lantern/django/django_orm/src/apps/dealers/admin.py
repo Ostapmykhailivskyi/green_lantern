@@ -1,12 +1,11 @@
 from django.contrib import admin
-
-# Register your models here.
 from apps.dealers.models import Dealer, City, Country
+from django.utils.safestring import mark_safe
 
 
 @admin.register(Dealer)
 class DealerAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('user',)
 
 
 @admin.register(City)
