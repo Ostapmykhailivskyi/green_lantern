@@ -1,27 +1,51 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+from django.db.models import Index
+from django.utils.translation import gettext_lazy as _
 
 
 class Dealer(User):
-    DealerID = models.IntegerField(primary_key=True)
-    Title = models.CharField(max_length=64)
-    Email = models.EmailField(max_length=60, blank=True)
-    Firstname = models.CharField(max_length=24)
-    Lastname = models.CharField(max_length=24)
-    CityID = models.ForeignKey('dealers.City', on_delete=models.CASCADE)
+    city = models.ForeignKey(to='City', related_name='dealers', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('Dealer')
+        verbose_name_plural = _('Dealer')
 
     @property
-    def full_contact(self):
-        return '%s %s %s' % (self.Firstname, self.Lastname, self.Email)
+    def title(self):
+        return f'{self.get_full_name()} from {self.city.name}, email: {self.email}'
+
+    def __str__(self):
+        return self.title
 
 
 class City(models.Model):
-    CityID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
-    CountryID = models.CharField(max_length=30)
+    country = models.ForeignKey(to='Country', on_delete=models.SET_NULL, null=True, related_name='cities')
+
+    class Meta:
+        verbose_name = _('City')
+        verbose_name_plural = _('Cities')
+
+        indexes = [
+            Index(fields=['name', ])
+        ]
+
+    def __str__(self):
+        return self.name
 
 
 class Country(models.Model):
-    CountryID = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=30)
-    code = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=50, unique=True)
+    code = models.IntegerField(null=True, blank=True, unique=True)
+
+    class Meta:
+        verbose_name = _('Country')
+        verbose_name_plural = _('Countries')
+
+        indexes = [
+            Index(fields=['name', ])
+        ]
+
+    def __str__(self):
+        return self.name

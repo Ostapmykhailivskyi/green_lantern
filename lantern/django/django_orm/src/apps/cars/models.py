@@ -1,20 +1,13 @@
 from django.db import models
-from django.db.models import Index, UniqueConstraint
+from django.db.models import Index
 from django.utils.translation import gettext_lazy as _
 
 from apps.cars.managers import CarManager, CarQuerySet
 from common.models import BaseDateAuditModel
-
-
-class Picture(models.Model):
-    PictureID = models.AutoField(primary_key=True)
-    URL = models.URLField(max_length=230)
-    Position = models.CharField(max_length=64)
-    Metadata = models.CharField(max_length=64)
+from djmoney.models.fields import MoneyField
 
 
 class Color(models.Model):
-    ColorID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=32, unique=True)
 
     class Meta:
@@ -30,7 +23,6 @@ class Color(models.Model):
 
 
 class CarBrand(models.Model):
-    BrandID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=32, unique=True)
     logo = models.ImageField(null=True, blank=False)
 
@@ -47,7 +39,6 @@ class CarBrand(models.Model):
 
 
 class CarModel(models.Model):
-    ModelID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=64)
     brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE)
 
@@ -63,11 +54,24 @@ class CarModel(models.Model):
         return self.name
 
 
+class Property(models.Model):
+    name = models.CharField(max_length=25, blank=True)
+    category = models.CharField(max_length=25, blank=True)
+    car = models.ManyToManyField(to='cars.Car', related_name='property')
+
+
 class Car(BaseDateAuditModel):
     STATUS_PENDING = 'pending'
     STATUS_PUBLISHED = 'published'
     STATUS_SOLD = 'sold'
     STATUS_ARCHIVED = 'archived'
+    PETROL = 'PL'
+    DIESEL = 'DL'
+    GASEOUS = 'GS'
+    HYBRID = 'HB'
+    ELECTRIC = 'EC'
+    TRANSMISSION_MANUAL = 'manual'
+    TRANSMISSION_AUTOMATIC = 'automatic'
 
     STATUS_CHOICES = (
         (STATUS_PENDING, "Pending"),
@@ -76,29 +80,51 @@ class Car(BaseDateAuditModel):
         (STATUS_ARCHIVED, "Archived"),
     )
 
+    ENGINE_TYPE_CHOICES = (
+        (PETROL, 'Petrol engine'),
+        (DIESEL, 'Diesel engine'),
+        (GASEOUS, 'Gaseous engine'),
+        (HYBRID, 'Hybrid engine'),
+        (ELECTRIC, 'Electric engine'),
+    )
+
+    FUEL_TYPE_CHOICES = (
+        (PETROL, 'Petrol'),
+        (DIESEL, 'Diesel'),
+        (GASEOUS, 'Gas'),
+        (HYBRID, 'Hybrid'),
+        (ELECTRIC, 'Electricity'),
+    )
+
+    GEAR_CASE_CHOICES = (
+        (TRANSMISSION_MANUAL, 'Manual gear case'),
+        (TRANSMISSION_AUTOMATIC, 'Automatic gear case'),
+    )
+
+    CURRENCY_CHOICES = (
+        ('EUR', 'Euros'),
+        ('USD', 'US Dollars'),
+        ('UAH', 'Hryvnia')
+    )
+
     objects = CarManager.from_queryset(CarQuerySet)()
     views = models.PositiveIntegerField(default=0, editable=False)
     slug = models.SlugField(max_length=75)
     number = models.CharField(max_length=16, unique=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True)
-    # dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='cars')
-    model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, blank=False)
+    dealer = models.ForeignKey(to='dealers.Dealer', on_delete=models.CASCADE, related_name='cars', null=True)
+
+    model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, related_name='cars')
     extra_title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Title second part'))
-    CarID = models.AutoField(primary_key=True)
-    ColorID = models.ForeignKey('cars.color', on_delete=models.CASCADE)
-    DealerID = models.ForeignKey('dealers.dealer', on_delete=models.CASCADE)
-    ModelID = models.ForeignKey('cars.CarModel', on_delete=models.CASCADE)
-    EngineType = models.TextField(blank=True)
-    PopulationType = models.TextField(blank=True)
-    Price = models.FloatField(null=True, blank=True)
-    FuelType = models.TextField(blank=True)
-    Doors = models.IntegerField(null=True, blank=True)
-    Capacity = models.IntegerField(null=True, blank=True)
-    GearCase = models.CharField(max_length=16, null=False)
-    Sitting_Place = models.IntegerField(null=True, blank=True)
-    FirstRegistrationDate = models.DateField(null=True, blank=True)
-    EnginePower = models.FloatField(null=True, blank=True)
-    other = models.CharField(max_length=16, null=True)
+    engine_type = models.CharField(max_length=2, choices=ENGINE_TYPE_CHOICES)
+    fuel_type = models.CharField(max_length=2, choices=FUEL_TYPE_CHOICES)
+    population_type = models.CharField(max_length=20, blank=True)
+    price = MoneyField(currency_choices=CURRENCY_CHOICES, max_digits=10)
+    doors = models.IntegerField(null=True, blank=True)
+    engine_capacity = models.FloatField(null=True, blank=True)
+    gear_case = models.CharField(max_length=9, choices=GEAR_CASE_CHOICES)
+    sitting_place = models.IntegerField(null=True, blank=True)
+    engine_power = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         order_number_start = 7600000

@@ -1,19 +1,18 @@
 from django.db import models
-from django.db.models.functions import Concat
 
 
 class OrderQuerySet(models.QuerySet):
-    def reserved(self):
-        return self.filter(status='Reserved')
+    def published(self):
+        return self.filter(status='processed')
+
+    def pend_pay(self):
+        return self.filter(status='pend_pay')
 
     def paid(self):
-        return self.filter(status='Paid')
-
-    def waiting_for_payment(self):
-        return self.filter(status='Waiting for payment')
+        return self.filter(status='paid')
 
     def archived(self):
-        return self.filter(status='Archived')
+        return self.filter(status='archived')
 
 
 class OrderManager(models.Manager):

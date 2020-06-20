@@ -1,8 +1,9 @@
 from django.contrib import admin
+
+# Register your models here.
 from apps.orders.models import Order
 
 
 @admin.register(Order)
-class ColorAdmin(admin.ModelAdmin):
-    list_display = ('Status',)
-
+class OrderAdmin(admin.ModelAdmin):
+    pass
