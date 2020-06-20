@@ -26,6 +26,9 @@ Just run `make test_env`
 - Create superuser `make test_user`. After that you will be able to login into Admin
 - Be happy
 
+test_user_email@mail.com
+test_user_password
+
 #### Create new app
 
 `make app name=<app_name>`
