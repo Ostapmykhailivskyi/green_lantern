@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+  {% block content %
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <a href="{% url 'articles:list_detail' %}" class="btn btn-primary">Back</a>
+        <input type="submit" class="btn btn-success" value="Update" />
+    </form>
+  {% endblock %}
