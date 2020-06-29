@@ -1,9 +1,10 @@
 from django.db import models
-from django.db.models import Index, UniqueConstraint
+from django.db.models import Index
 from django.utils.translation import gettext_lazy as _
 
 from apps.cars.managers import CarManager, CarQuerySet
 from common.models import BaseDateAuditModel
+from apps.dealers.models import Dealer
 
 
 class Color(models.Model):
@@ -53,11 +54,24 @@ class CarModel(models.Model):
         return self.name
 
 
+class Property(models.Model):
+    name = models.CharField(max_length=25, blank=True)
+    category = models.CharField(max_length=25, blank=True)
+    car = models.ManyToManyField(to='cars.Car', related_name='property')
+
+
 class Car(BaseDateAuditModel):
     STATUS_PENDING = 'pending'
     STATUS_PUBLISHED = 'published'
     STATUS_SOLD = 'sold'
     STATUS_ARCHIVED = 'archived'
+    PETROL = 'PL'
+    DIESEL = 'DL'
+    GASEOUS = 'GS'
+    HYBRID = 'HB'
+    ELECTRIC = 'EC'
+    TRANSMISSION_MANUAL = 'manual'
+    TRANSMISSION_AUTOMATIC = 'automatic'
 
     STATUS_CHOICES = (
         (STATUS_PENDING, "Pending"),
@@ -66,18 +80,42 @@ class Car(BaseDateAuditModel):
         (STATUS_ARCHIVED, "Archived"),
     )
 
+    ENGINE_TYPE_CHOICES = (
+        (PETROL, 'Petrol engine'),
+        (DIESEL, 'Diesel engine'),
+        (GASEOUS, 'Gaseous engine'),
+        (HYBRID, 'Hybrid engine'),
+        (ELECTRIC, 'Electric engine'),
+    )
+
+    FUEL_TYPE_CHOICES = (
+        (PETROL, 'Petrol'),
+        (DIESEL, 'Diesel'),
+        (GASEOUS, 'Gas'),
+        (HYBRID, 'Hybrid'),
+        (ELECTRIC, 'Electricity'),
+    )
+
+    GEAR_CASE_CHOICES = (
+        (TRANSMISSION_MANUAL, 'Manual gear case'),
+        (TRANSMISSION_AUTOMATIC, 'Automatic gear case'),
+    )
+
+    CURRENCY_CHOICES = (
+        ('EUR', 'Euros'),
+        ('USD', 'US Dollars'),
+        ('UAH', 'Hryvnia')
+    )
+
     objects = CarManager.from_queryset(CarQuerySet)()
     views = models.PositiveIntegerField(default=0, editable=False)
     slug = models.SlugField(max_length=75)
     number = models.CharField(max_length=16, unique=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING, blank=True)
-    # dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='cars')
+    dealer = models.ForeignKey('Dealer', on_delete=models.CASCADE, related_name='cars', null=True)
 
-    model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, blank=False)
+    model = models.ForeignKey(to='CarModel', on_delete=models.SET_NULL, null=True, related_name='cars')
     extra_title = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Title second part'))
-
-    # other fields ...
-    #
 
     def save(self, *args, **kwargs):
         order_number_start = 7600000
@@ -94,11 +132,10 @@ class Car(BaseDateAuditModel):
 
     @property
     def title(self):
-        return f'{self.model.brand} {self.extra_title or ""}'  # do not show None
+        return f'{self.model.brand} {self.extra_title or ""}'
 
     def __str__(self):
         return self.title
-
 
     class Meta:
         verbose_name = _('Car')
@@ -107,3 +144,14 @@ class Car(BaseDateAuditModel):
         indexes = [
             Index(fields=['status', ])
         ]
+
+
+class Property(models.Model):
+    category = models.CharField(max_length=35)
+    name = models.CharField(max_length=20)
+    car = models.ManyToManyField(Car)
+    class Meta:
+        indexes = [Index(fields=['name', ])]
+
+    def __str__(self):
+        return self.name
